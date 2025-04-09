@@ -61,6 +61,8 @@ kotlin {
 
             implementation(libs.multiplatform.settings.no.arg)
             implementation(libs.multiplatform.settings.coroutines)
+
+            implementation(libs.kotlinx.serialization.json)
         }
 //        iosMain.dependencies {
 //            implementation(libs.ktor.client.darwin)
