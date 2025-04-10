@@ -4,6 +4,7 @@ import com.ashoumar.currensync.domain.CurrencyApiService
 import com.ashoumar.currensync.domain.PreferencesRepository
 import com.ashoumar.currensync.domain.model.ApiResponse
 import com.ashoumar.currensync.domain.model.Currency
+import com.ashoumar.currensync.domain.model.CurrencyCode
 import com.ashoumar.currensync.domain.model.RequestState
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -48,10 +49,23 @@ class CurrencyApiServiceImpl(
             if(response.status.value == 200){
                 val apiResponse = Json.decodeFromString<ApiResponse>(response.body())
 
+                val availableCurrencyCodes = apiResponse.data.keys
+                    .filter {
+                        CurrencyCode.entries
+                            .map { code -> code.name }
+                            .toSet()
+                            .contains(it)
+                    }
+
+                val availableCurrencies = apiResponse.data.values
+                    .filter { currency ->
+                        availableCurrencyCodes.contains(currency.code)
+                    }
+
                 val lastUpdated = apiResponse.meta.lastUpdatedAt
                 preferences.saveLastUpdate(lastUpdated)
 
-                RequestState.Success(data = apiResponse.data.values.toList())
+                RequestState.Success(data = availableCurrencies)
             }else {
                 RequestState.Error(message = "HTTP error code: ${response.status}")
             }
