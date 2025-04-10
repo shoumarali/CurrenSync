@@ -1,16 +1,15 @@
 package com.ashoumar.currensync.domain.model
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class ApiResponse(
-    val metadata: MetaData,
+    val meta: Meta,
     val data:Map<String, Currency>
 )
 
 @Serializable
-data class MetaData(
+data class Meta(
     val lastUpdatedAt: String
 )
 
